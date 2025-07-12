@@ -8,11 +8,26 @@ if (navigator.geolocation) {
       socket.emit("send-location", { latitude, longitude });
     },
     (error) => {
-      console.error(error);
+      (error) => {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert("Location access denied. Please allow location permission.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("Location unavailable. Try again later.");
+            break;
+          case error.TIMEOUT:
+            alert("Location request timed out. Try again.");
+            break;
+          default:
+            alert("An unknown error occurred.");
+        }
+        console.error("Geolocation error:", error);
+      };
     },
     {
       enableHighAccuracy: true,
-      timeout: 5000,
+      timeout: 10000,
       maximumAge: 0,
     }
   );
@@ -39,7 +54,7 @@ socket.on("live-location", function (data) {
   }
 });
 
-socket.on("user-disconnect", (id) => {
+socket.on("user-disconnect", ({ id }) => {
   if (markers[id]) {
     map.removeLayer(markers[id]);
     delete markers[id];
