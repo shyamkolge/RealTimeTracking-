@@ -33,7 +33,7 @@ if (navigator.geolocation) {
   );
 }
 
-const map = L.map("map").setView([0, 0], 16);
+const map = L.map("map").setView([0, 0]);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
@@ -45,12 +45,17 @@ const markers = {};
 
 socket.on("live-location", function (data) {
   const { id, longitude, latitude } = data;
-  map.setView([latitude, longitude], 16);
+  map.setView([latitude, longitude]);
 
   if (markers[id]) {
     markers[id].setLatLng([latitude, longitude]);
   } else {
     markers[id] = L.marker([latitude, longitude]).addTo(map);
+  }
+
+  // Only center the map for yourself
+  if (id === socket.id) {
+    map.setView([latitude, longitude], 16);
   }
 });
 
