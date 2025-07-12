@@ -1,5 +1,4 @@
-// const socket = io();
-const socket = io(window.location.hostname + ":3000");
+const socket = io();
 
 // Getig live location
 if (navigator.geolocation) {
