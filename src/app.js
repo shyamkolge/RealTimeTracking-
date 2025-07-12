@@ -2,28 +2,30 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
 
-// Log
-app.use(morgan("dev"));
+// Get __dirname safely in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Middlewares
+// Middleware
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// EJS
+// Set EJS view engine
 app.set("view engine", "ejs");
-// Server side rendering
 
-const __dirname =
-  "E:\\Full Stack Web Development\\MERN\\Backend\\shreyanCodding";
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static("public"));
+// Static files
+app.use(express.static(path.join(__dirname, "../public")));
 
-app.use("/", (req, res) => {
-  res.render("index");
+// Routes
+app.get("/", (req, res) => {
+  console.log(__dirname);
+  res.render("index"); // Ensure `views/index.ejs` exists
 });
 
 export default app;
